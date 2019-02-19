@@ -3,6 +3,7 @@ import hashlib
 import json
 import pickle
 import requests
+import sqlite3 as lite
 
 from utility.hash_util import hash_block
 from utility.verification import Verification
@@ -24,7 +25,8 @@ class Blockchain:
         self.__peer_nodes = set()
         self.node_id = node_id
         self.resolve_conflicts = False
-        self.load_data()
+        self.blockchain_db = None
+        
 
     @property
     def chain(self):
@@ -36,6 +38,7 @@ class Blockchain:
 
     def get_open_transactions(self):
         return self.__open_transactions[:]
+
 
     def load_data(self):
         try:
@@ -62,7 +65,7 @@ class Blockchain:
                 self.__peer_nodes = set(peer_nodes)
 
         except (IOError, IndexError):
-            print('Handled exception')
+            print('Handled loading exception')
 
     def save_data(self):
         try:
